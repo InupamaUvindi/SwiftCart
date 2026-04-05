@@ -53,6 +53,5 @@ package-lock.json
 
 .env
 functions/.env
-lib/keys.dart
-lib/**/*.dart
+
 !lib/**/.gitkeep
