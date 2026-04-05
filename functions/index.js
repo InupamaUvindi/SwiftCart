@@ -12,6 +12,7 @@ initializeApp();
 // Then paste your sk_test_... key when prompted.
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+
 exports.createPaymentIntent = onCall(
   { secrets: [stripeSecretKey] },
   async (request) => {
