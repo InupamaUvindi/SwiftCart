@@ -1,38 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:swiftcart/main.dart';
-import '../services/auth_service.dart';
+import '../../services/auth_service.dart';
 import 'dart:math' as math;
+import '../../widgets/luxury_painter.dart';
 
-// ── SHARED LUXURY BACKGROUND PAINTER (matches home screen) ──
-class SwiftCartLuxuryPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    const gold = Color(0xFFD4AF37);
-    final glowPaint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 60);
-
-    canvas.drawCircle(Offset(size.width * 0.15, size.height * 0.12), 160, glowPaint..color = gold.withOpacity(0.15));
-    canvas.drawCircle(Offset(size.width * 0.85, size.height * 0.55), 200, glowPaint..color = gold.withOpacity(0.12));
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.9), 140, glowPaint..color = gold.withOpacity(0.04));
-
-    final streakPaint = Paint()..color = gold.withOpacity(0.15)..strokeWidth = 1.8..style = PaintingStyle.stroke;
-    for (int i = 0; i < 8; i++) {
-      final offset = i * 32.0;
-      canvas.drawLine(Offset(size.width * 0.4 + offset, 0), Offset(size.width + 60, size.height * 0.45 + offset * 0.8), streakPaint);
-    }
-
-    final arcPaint = Paint()..color = gold.withOpacity(0.25)..style = PaintingStyle.stroke..strokeWidth = 2.5;
-    canvas.drawArc(Rect.fromCircle(center: Offset(-30, size.height * 0.88), radius: 200), -math.pi / 2, math.pi, false, arcPaint);
-
-    final dotPaint = Paint()..color = gold.withOpacity(0.20);
-    for (double x = 18; x < size.width; x += 35) {
-      for (double y = 18; y < size.height; y += 35) {
-        canvas.drawCircle(Offset(x, y), 1.5, dotPaint);
-      }
-    }
-  }
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -120,7 +91,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
         children: [
           // ── LAYER 1: LUXURY PAINTER ──
           Positioned.fill(child: CustomPaint(painter: SwiftCartLuxuryPainter())),
-          Positioned.fill(child: Container(color: Colors.black.withOpacity(0.2))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha:0.2))),
 
           // ── LAYER 2: CONTENT ──
           FadeTransition(
@@ -131,7 +102,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                   backgroundColor: Colors.transparent,
                   elevation: 0,
                   leading: IconButton(
-                    icon: Icon(Icons.arrow_back_ios_new, color: gold.withOpacity(0.8), size: 18),
+                    icon: Icon(Icons.arrow_back_ios_new, color: gold.withValues(alpha:0.8), size: 18),
                     onPressed: () => Navigator.pop(context),
                   ),
                   pinned: false,
@@ -194,7 +165,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                         decoration: BoxDecoration(
                           color: const Color(0xFF1E1E1E),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: gold.withOpacity(0.15), width: 1),
+                          border: Border.all(color: gold.withValues(alpha:0.15), width: 1),
                         ),
                         child: Row(
                           children: [
@@ -215,7 +186,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
                           style: ElevatedButton.styleFrom(
                             backgroundColor: gold,
                             foregroundColor: charcoal,
-                            disabledBackgroundColor: gold.withOpacity(0.4),
+                            disabledBackgroundColor: gold.withValues(alpha:0.4),
                             elevation: 0,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                           ),
@@ -254,7 +225,7 @@ class _SignupScreenState extends State<SignupScreen> with SingleTickerProviderSt
 
   Widget _buildLabel(String label, Color gold) => Text(
     label,
-    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: gold.withOpacity(0.7), letterSpacing: 0.8),
+    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: gold.withValues(alpha:0.7), letterSpacing: 0.8),
   );
 }
 
@@ -285,7 +256,7 @@ class _LuxuryField extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: gold.withOpacity(0.15), width: 1.5),
+        border: Border.all(color: gold.withValues(alpha:0.15), width: 1.5),
       ),
       child: TextField(
         controller: controller,
@@ -295,12 +266,12 @@ class _LuxuryField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(color: Colors.white38, fontSize: 15),
-          prefixIcon: Icon(icon, color: gold.withOpacity(0.5), size: 20),
+          prefixIcon: Icon(icon, color: gold.withValues(alpha:0.5), size: 20),
           suffixIcon: isPassword
               ? IconButton(
             icon: Icon(
               obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-              color: gold.withOpacity(0.4), size: 20,
+              color: gold.withValues(alpha:0.4), size: 20,
             ),
             onPressed: onToggle,
           ) : null,

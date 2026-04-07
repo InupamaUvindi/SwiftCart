@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:swiftcart/screens/login_screen.dart';
-import 'package:swiftcart/screens/signup_screen.dart';
+import 'package:swiftcart/screens/auth/login_screen.dart';
+import 'package:swiftcart/screens/auth/signup_screen.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -58,9 +58,9 @@ class _StartScreenState extends State<StartScreen>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.15),
-                    Colors.black.withOpacity(0.55),
-                    Colors.black.withOpacity(0.92),
+                    Colors.black.withValues(alpha:0.15),
+                    Colors.black.withValues(alpha:0.55),
+                    Colors.black.withValues(alpha:0.92),
                   ],
                   stops: const [0.0, 0.45, 1.0],
                 ),
@@ -104,10 +104,10 @@ class _StartScreenState extends State<StartScreen>
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: gold.withOpacity(0.15),
+                              color: gold.withValues(alpha:0.15),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                  color: gold.withOpacity(0.4), width: 1),
+                                  color: gold.withValues(alpha:0.4), width: 1),
                             ),
                             child: const Text(
                               'PREMIUM MARKETPLACE',
@@ -134,7 +134,7 @@ class _StartScreenState extends State<StartScreen>
                           Text(
                             'Curated shopping for the\ndiscerning buyer.',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.62),
+                              color: Colors.white.withValues(alpha:0.62),
                               fontSize: 15,
                               height: 1.55,
                               fontWeight: FontWeight.w400,
@@ -224,7 +224,7 @@ class _OutlineButton extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
-          side: BorderSide(color: Colors.white.withOpacity(0.35), width: 1.5),
+          side: BorderSide(color: Colors.white.withValues(alpha:0.35), width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
