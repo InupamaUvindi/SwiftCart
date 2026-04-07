@@ -2,37 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math' as math;
-
-// ── SHARED LUXURY BACKGROUND PAINTER (matches home screen) ──
-class SwiftCartLuxuryPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    const gold = Color(0xFFD4AF37);
-    final glowPaint = Paint()..maskFilter = const MaskFilter.blur(BlurStyle.normal, 60);
-
-    canvas.drawCircle(Offset(size.width * 0.15, size.height * 0.12), 160, glowPaint..color = gold.withOpacity(0.15));
-    canvas.drawCircle(Offset(size.width * 0.85, size.height * 0.55), 200, glowPaint..color = gold.withOpacity(0.12));
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.9), 140, glowPaint..color = gold.withOpacity(0.04));
-
-    final streakPaint = Paint()..color = gold.withOpacity(0.15)..strokeWidth = 1.8..style = PaintingStyle.stroke;
-    for (int i = 0; i < 8; i++) {
-      final offset = i * 32.0;
-      canvas.drawLine(Offset(size.width * 0.4 + offset, 0), Offset(size.width + 60, size.height * 0.45 + offset * 0.8), streakPaint);
-    }
-
-    final arcPaint = Paint()..color = gold.withOpacity(0.25)..style = PaintingStyle.stroke..strokeWidth = 2.5;
-    canvas.drawArc(Rect.fromCircle(center: Offset(-30, size.height * 0.88), radius: 200), -math.pi / 2, math.pi, false, arcPaint);
-
-    final dotPaint = Paint()..color = gold.withOpacity(0.20);
-    for (double x = 18; x < size.width; x += 35) {
-      for (double y = 18; y < size.height; y += 35) {
-        canvas.drawCircle(Offset(x, y), 1.5, dotPaint);
-      }
-    }
-  }
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
+import '../../widgets/luxury_painter.dart';
 
 class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
@@ -43,7 +13,6 @@ class AddressScreen extends StatefulWidget {
 
 class _AddressScreenState extends State<AddressScreen> {
   final _addressController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _cityController = TextEditingController();
 
   bool _isLoading = false;
@@ -59,7 +28,6 @@ class _AddressScreenState extends State<AddressScreen> {
   @override
   void dispose() {
     _addressController.dispose();
-    _phoneController.dispose();
     _cityController.dispose();
     super.dispose();
   }
@@ -74,7 +42,6 @@ class _AddressScreenState extends State<AddressScreen> {
       if (doc.exists) {
         final data = doc.data() as Map<String, dynamic>;
         _addressController.text = data['shippingAddress'] ?? '';
-        _phoneController.text = data['phoneNumber'] ?? '';
         _cityController.text = data['city'] ?? '';
       }
     } catch (_) {}
@@ -90,7 +57,6 @@ class _AddressScreenState extends State<AddressScreen> {
           .doc(user?.uid)
           .update({
         'shippingAddress': _addressController.text.trim(),
-        'phoneNumber': _phoneController.text.trim(),
         'city': _cityController.text.trim(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -106,7 +72,18 @@ class _AddressScreenState extends State<AddressScreen> {
         Navigator.pop(context);
       }
     } catch (e) {
-      // Error handling...
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            'Failed to save address. Please try again.',
+            style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+          ),
+          backgroundColor: Colors.red[900],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(16),
+        ));
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -123,7 +100,7 @@ class _AddressScreenState extends State<AddressScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, size: 18, color: gold.withOpacity(0.8)),
+          icon: Icon(Icons.arrow_back_ios_new, size: 18, color: gold.withValues(alpha:0.8)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -142,7 +119,7 @@ class _AddressScreenState extends State<AddressScreen> {
         children: [
           // ── LAYER 1: LUXURY PAINTER ──
           Positioned.fill(child: CustomPaint(painter: SwiftCartLuxuryPainter())),
-          Positioned.fill(child: Container(color: Colors.black.withOpacity(0.2))),
+          Positioned.fill(child: Container(color: Colors.black.withValues(alpha:0.2))),
 
           // ── LAYER 2: CONTENT ──
           _isLoading
@@ -161,10 +138,10 @@ class _AddressScreenState extends State<AddressScreen> {
                       decoration: BoxDecoration(
                         color: const Color(0xFF1E1E1E),
                         shape: BoxShape.circle,
-                        border: Border.all(color: gold.withOpacity(0.3), width: 2),
+                        border: Border.all(color: gold.withValues(alpha:0.3), width: 2),
                         boxShadow: [
                           BoxShadow(
-                            color: gold.withOpacity(0.1),
+                            color: gold.withValues(alpha:0.1),
                             blurRadius: 20,
                             spreadRadius: 2,
                           )
@@ -174,17 +151,6 @@ class _AddressScreenState extends State<AddressScreen> {
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  _buildLabel('Phone Number', gold),
-                  const SizedBox(height: 10),
-                  _buildCustomField(
-                    controller: _phoneController,
-                    hint: '+94 7X XXX XXXX',
-                    icon: Icons.phone_android_rounded,
-                    keyboardType: TextInputType.phone,
-                    gold: gold,
-                  ),
-                  const SizedBox(height: 24),
 
                   _buildLabel('City / Region', gold),
                   const SizedBox(height: 10),
@@ -215,7 +181,7 @@ class _AddressScreenState extends State<AddressScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: gold,
                         foregroundColor: const Color(0xFF0A0A0A),
-                        disabledBackgroundColor: gold.withOpacity(0.4),
+                        disabledBackgroundColor: gold.withValues(alpha:0.4),
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
@@ -246,7 +212,7 @@ class _AddressScreenState extends State<AddressScreen> {
     style: TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w700,
-      color: gold.withOpacity(0.7),
+      color: gold.withValues(alpha:0.7),
       letterSpacing: 0.8,
     ),
   );
@@ -263,7 +229,7 @@ class _AddressScreenState extends State<AddressScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: gold.withOpacity(0.15), width: 1.5),
+        border: Border.all(color: gold.withValues(alpha:0.15), width: 1.5),
       ),
       child: TextField(
         controller: controller,
@@ -273,7 +239,7 @@ class _AddressScreenState extends State<AddressScreen> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(color: Colors.white38, fontSize: 14),
-          prefixIcon: Icon(icon, color: gold.withOpacity(0.5), size: 20),
+          prefixIcon: Icon(icon, color: gold.withValues(alpha:0.5), size: 20),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
